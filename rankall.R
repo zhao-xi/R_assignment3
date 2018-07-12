@@ -32,7 +32,8 @@ rankall <- function(outcome, num = "best"){
         }
         
         data_list <- split(outcome_data, outcome_data$State)
-        data_list <- lapply(data_list,function(y) y<-y[order(y[[outcome]]),])
+        data_list <- lapply(data_list,function(x) x<-x[order(as.character(x[["Hospital.Name"]])),] )
+        data_list <- lapply(data_list,function(y) y<-y[order(as.numeric(y[[outcome]])),])
      
         for(x in state_vect){
                 if(num == "best") num <- 1
