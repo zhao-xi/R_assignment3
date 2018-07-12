@@ -1,4 +1,4 @@
-best <- function(state, outcome){
+rankhospital <- function(state, outcome, num = "best"){
         ## Read outcome data
         outcome_data <- read.csv("outcome-of-care-measures.csv",
                                  colClasses = "character")
@@ -17,7 +17,8 @@ best <- function(state, outcome){
                 stop()
         }
         
-        ## Return hospital in that state with lowest 30-day death rate
+        ## Return hospital name in that state with the given rank
+        ## 30-day death rate
         data <- subset(outcome_data, outcome_data$State == state)
         if(outcome=="heart attack"){
                 outcome <- 
@@ -32,7 +33,12 @@ best <- function(state, outcome){
                         "Hospital.30.Day.Death..Mortality..Rates.from.Pneumonia"
         }
         
-        min_index <- which.min(as.numeric(data[[outcome]]))
+        data[[outcome]] <- as.numeric(data[[outcome]])
+        data <- subset(data,!is.na(data[[outcome]]))
+        data <- data[order(data[["Hospital.Name"]]),]
+        data <- data[order(data[[outcome]]),]
         
-        as.character(data[["Hospital.Name"]][min_index])
+        if(num=="best") num <- 1
+        if(num=="worst") num <- nrow(data)
+        data[num,][["Hospital.Name"]]
 }
